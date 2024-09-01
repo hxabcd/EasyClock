@@ -1,10 +1,11 @@
 import sys
 import PyQt6.QtWidgets as qtw
 import PyQt6.QtCore as qtc
-from PyQt6.uic import loadUi
 import qfluentwidgets as qfw
 from qframelesswindow.utils import getSystemAccentColor
 import time
+
+from stopwatch_ui import Ui_Stopwatch
 
 
 class Stopwatch(qtw.QWidget):
@@ -36,39 +37,24 @@ class Stopwatch(qtw.QWidget):
         )
 
 
-class Control(qtw.QWidget):
+class StopwatchControl(qtw.QWidget, Ui_Stopwatch):
     def __init__(self, timer: Stopwatch):
         super().__init__()
-        self.timer = timer
         self.setObjectName("Stopwatch")
-
-        self.title = qfw.TitleLabel("Stopwatch", self)
-        self.timing = qtw.QWidget()
-        self.label = qfw.BodyLabel("Click to start", self.timing)
-        self.buttonSwStatus = "start"
-        self.buttonSw = qfw.PushButton("Start", self)
-        self.buttonSw.clicked.connect(self.buttonSwitchOnClick)
-        self.buttonReset = qfw.PushButton("Reset", self)
+        
+        self.setupUi(self)
+        self.buttonSw.clicked.connect(self.buttonSwOnClick)
         self.buttonReset.clicked.connect(self.buttonResetOnClick)
+        self.timer = timer
 
-        self.timing_layout = qtw.QHBoxLayout()
-        self.timing_layout.addWidget(self.label)
-        self.timing_layout.addWidget(self.buttonSw)
-        self.timing_layout.addWidget(self.buttonReset)
-        self.timing.setLayout(self.timing_layout)
+        self.buttonSwStatus = "start"
 
-        self.show_layout = qtw.QVBoxLayout()
-        self.show_layout.addWidget(self.title)
-        self.show_layout.setAlignment(self.title, qtc.Qt.AlignmentFlag.AlignTop)
-        self.show_layout.addWidget(self.timing)
-        self.setLayout(self.show_layout)
-
-    def buttonSwitchOnClick(self):
+    def buttonSwOnClick(self):
         if self.buttonSw.text() == (
             "%s" % self.buttonSwStatus.capitalize()
         ):  # 开始/继续计时
             self.buttonSw.setText("Pause")
-            self.label.setText("Click to pause")
+            self.timeShow.setText("Click to pause")
             self.timer.start()
             print("Stopwatch %s" % self.buttonSwStatus)
             if self.buttonSwStatus == "start":  # 切换按钮状态
@@ -85,14 +71,14 @@ class Control(qtw.QWidget):
                 isClosable=True,
             )
             self.buttonSw.setText("%s" % self.buttonSwStatus.capitalize())
-            self.label.setText("Click to %s" % self.buttonSwStatus)
+            self.timeShow.setText("Click to %s" % self.buttonSwStatus)
 
     def buttonResetOnClick(self):  # 重置计时
         self.timer.reset()
         print("Stopwatch reset")
         self.buttonSwStatus = "start"  # 重置按钮状态
         self.buttonSw.setText("Start")
-        self.label.setText("Click to start")
+        self.timeShow.setText("Click to start")
 
         qfw.Flyout.create(
             title="Successful",
@@ -137,12 +123,11 @@ class MainWindow(qfw.FluentWindow):
             qfw.setThemeColor(getSystemAccentColor(), save=False)
 
         timer = Stopwatch()
-        control = Control(timer)
+        timer2 = Stopwatch()
+        stopwatchCtl = StopwatchControl(timer)
         about = About()
-        self.addSubInterface(
-            interface=control, icon=qfw.FluentIcon.STOP_WATCH, text="Stopwatch"
-        )
-        self.addSubInterface(interface=about, icon=qfw.FluentIcon.INFO, text="About")
+        self.addSubInterface(stopwatchCtl, qfw.FluentIcon.STOP_WATCH, "Stopwatch")
+        self.addSubInterface(about, qfw.FluentIcon.INFO, "About")
 
 
 def main():
