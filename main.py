@@ -54,7 +54,7 @@ class StopwatchControl(qtw.QWidget, Ui_Stopwatch):
             "%s" % self.buttonSwStatus.capitalize()
         ):  # 开始/继续计时
             self.buttonSw.setText("Pause")
-            self.timeShow.setText("Click to pause")
+            self.statusShow.setText("Click to pause")
             self.timer.start()
             print("Stopwatch %s" % self.buttonSwStatus)
             if self.buttonSwStatus == "start":  # 切换按钮状态
@@ -71,14 +71,14 @@ class StopwatchControl(qtw.QWidget, Ui_Stopwatch):
                 isClosable=True,
             )
             self.buttonSw.setText("%s" % self.buttonSwStatus.capitalize())
-            self.timeShow.setText("Click to %s" % self.buttonSwStatus)
+            self.statusShow.setText("Click to %s" % self.buttonSwStatus)
 
     def buttonResetOnClick(self):  # 重置计时
         self.timer.reset()
         print("Stopwatch reset")
         self.buttonSwStatus = "start"  # 重置按钮状态
         self.buttonSw.setText("Start")
-        self.timeShow.setText("Click to start")
+        self.statusShow.setText("Click to start")
 
         qfw.Flyout.create(
             title="Successful",
