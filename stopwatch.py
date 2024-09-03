@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'd:\MyPC\Advanced\Code\Python\Projects\EasyClock\stopwatch.ui'
+# Form implementation generated from reading ui file 'stopwatch.ui'
 #
 # Created by: PyQt6 UI code generator 6.7.1
 #
@@ -21,7 +21,7 @@ class Ui_Stopwatch(object):
         self.title.setFont(font)
         self.title.setObjectName("title")
         self.gridLayoutWidget = QtWidgets.QWidget(parent=Stopwatch)
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(20, 60, 211, 101))
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(20, 60, 211, 131))
         self.gridLayoutWidget.setObjectName("gridLayoutWidget")
         self.gridLayout = QtWidgets.QGridLayout(self.gridLayoutWidget)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
@@ -45,6 +45,9 @@ class Ui_Stopwatch(object):
         self.statusShow.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.statusShow.setObjectName("statusShow")
         self.gridLayout.addWidget(self.statusShow, 0, 0, 1, 1)
+        self.buttonShowTime = PushButton(parent=self.gridLayoutWidget)
+        self.buttonShowTime.setObjectName("buttonShowTime")
+        self.gridLayout.addWidget(self.buttonShowTime, 3, 0, 1, 1)
         self.statusShow.setBuddy(self.statusShow)
 
         self.retranslateUi(Stopwatch)
@@ -58,4 +61,5 @@ class Ui_Stopwatch(object):
         self.buttonSw.setText(_translate("Stopwatch", "Start"))
         self.buttonReset.setText(_translate("Stopwatch", "Reset"))
         self.statusShow.setText(_translate("Stopwatch", "Stopwatch hasn\'t get start"))
+        self.buttonShowTime.setText(_translate("Stopwatch", "Show time past"))
 from qfluentwidgets import BodyLabel, PushButton, TitleLabel
