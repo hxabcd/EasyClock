@@ -1,35 +1,47 @@
 import sys
-import PyQt6.QtWidgets as qtw
-import PyQt6.QtCore as qtc
-import qfluentwidgets as qfw
-from qframelesswindow.utils import getSystemAccentColor
 import time
 
-from stopwatch_ui import Ui_Stopwatch
+import PyQt6.QtCore as QtC
+import PyQt6.QtWidgets as QtW
+import qfluentwidgets as qfw
+from qframelesswindow.utils import getSystemAccentColor
+
+from stopwatch import Ui_Stopwatch
 
 
-class Stopwatch(qtw.QWidget):
+class Stopwatch:
     def __init__(self):
-        self.reset()
+        self.start_time = 0
+        self.past_time = 0
+        self.is_running = False
 
     def start(self):
         self.start_time = time.time()
+        self.is_running = True
 
     def pause(self):
-        self.past_time = self.getnow()
+        self.past_time = self.get(now=True)
         self.start_time = 0
+        self.is_running = False
 
     def reset(self):
         self.start_time = 0
         self.past_time = 0
+        self.is_running = False
 
-    def get(self):
+    def get(self, now=False):
+        if now:
+            return time.time() - self.start_time + self.past_time
         return self.past_time
 
-    def getnow(self):
-        return time.time() - self.start_time + self.past_time
-
-    def getf(self):
+    def getf(self, now=False):
+        if now:
+            now_time = time.time() - self.start_time + self.past_time
+            return "%02d:%02d:%06.3f" % (
+                now_time // 60 // 60,
+                now_time // 60 % 60,
+                now_time % 60 % 60,
+            )
         return "%02d:%02d:%06.3f" % (
             self.past_time // 60 // 60,
             self.past_time // 60 % 60,
@@ -37,21 +49,22 @@ class Stopwatch(qtw.QWidget):
         )
 
 
-class StopwatchControl(qtw.QWidget, Ui_Stopwatch):
+class StopwatchControl(QtW.QWidget, Ui_Stopwatch):
     def __init__(self, timer: Stopwatch):
         super().__init__()
         self.setObjectName("Stopwatch")
-        
+
         self.setupUi(self)
         self.buttonSw.clicked.connect(self.buttonSwOnClick)
         self.buttonReset.clicked.connect(self.buttonResetOnClick)
+        self.buttonShowTime.clicked.connect(self.buttonShowTimeOnClick)
         self.timer = timer
 
         self.buttonSwStatus = "start"
 
     def buttonSwOnClick(self):
         if self.buttonSw.text() == (
-            "%s" % self.buttonSwStatus.capitalize()
+                "%s" % self.buttonSwStatus.capitalize()
         ):  # 开始/继续计时
             self.buttonSw.setText("Pause")
             self.statusShow.setText("Click to pause")
@@ -89,8 +102,18 @@ class StopwatchControl(qtw.QWidget, Ui_Stopwatch):
             isClosable=True,
         )
 
+    def buttonShowTimeOnClick(self):
+        qfw.Flyout.create(
+            title="Time past now:",
+            content="%s" % self.timer.getf(True) if self.timer.is_running else self.timer.getf(),
+            icon=qfw.InfoBarIcon.SUCCESS,
+            target=self.buttonReset,
+            parent=self,
+            isClosable=True,
+        )
 
-class About(qtw.QWidget):
+
+class About(QtW.QWidget):
     def __init__(self):
         super().__init__()
         self.setObjectName("About")
@@ -102,9 +125,9 @@ class About(qtw.QWidget):
         self.author = qfw.BodyLabel("Author: HxAbCd", self)
         self.text.setWordWrap(True)
 
-        self.show_layout = qtw.QVBoxLayout()
+        self.show_layout = QtW.QVBoxLayout()
         self.show_layout.addWidget(self.title)
-        self.show_layout.setAlignment(self.title, qtc.Qt.AlignmentFlag.AlignTop)
+        self.show_layout.setAlignment(self.title, QtC.Qt.AlignmentFlag.AlignTop)
         self.show_layout.addWidget(self.text)
         self.show_layout.addWidget(self.author)
         self.setLayout(self.show_layout)
@@ -113,9 +136,7 @@ class About(qtw.QWidget):
 class MainWindow(qfw.FluentWindow):
     def __init__(self):
         super().__init__()
-        # self.resize(360, 240)
-        self.setFixedWidth(400)
-        self.setFixedHeight(300)
+        self.resize(320, 280)
         self.setWindowTitle("EasyClock")
 
         qfw.setTheme(qfw.Theme.AUTO)
@@ -123,15 +144,14 @@ class MainWindow(qfw.FluentWindow):
             qfw.setThemeColor(getSystemAccentColor(), save=False)
 
         timer = Stopwatch()
-        timer2 = Stopwatch()
-        stopwatchCtl = StopwatchControl(timer)
+        stopwatch_ctl = StopwatchControl(timer)
         about = About()
-        self.addSubInterface(stopwatchCtl, qfw.FluentIcon.STOP_WATCH, "Stopwatch")
+        self.addSubInterface(stopwatch_ctl, qfw.FluentIcon.STOP_WATCH, "Stopwatch")
         self.addSubInterface(about, qfw.FluentIcon.INFO, "About")
 
 
 def main():
-    app = qtw.QApplication(sys.argv)
+    app = QtW.QApplication(sys.argv)
     window = MainWindow()
     window.show()
     sys.exit(app.exec())

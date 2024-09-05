@@ -61,5 +61,5 @@ class Ui_Stopwatch(object):
         self.buttonSw.setText(_translate("Stopwatch", "Start"))
         self.buttonReset.setText(_translate("Stopwatch", "Reset"))
         self.statusShow.setText(_translate("Stopwatch", "Stopwatch hasn\'t get start"))
-        self.buttonShowTime.setText(_translate("Stopwatch", "Show time past"))
+        self.buttonShowTime.setText(_translate("Stopwatch", "Show past time"))
 from qfluentwidgets import BodyLabel, PushButton, TitleLabel

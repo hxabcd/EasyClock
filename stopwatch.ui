@@ -38,7 +38,7 @@
      <x>20</x>
      <y>60</y>
      <width>211</width>
-     <height>101</height>
+     <height>131</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
@@ -84,6 +84,13 @@
       </property>
       <property name="buddy">
        <cstring>statusShow</cstring>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="PushButton" name="buttonShowTime">
+      <property name="text">
+       <string>Show past time</string>
       </property>
      </widget>
     </item>
